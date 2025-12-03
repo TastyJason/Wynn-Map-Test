@@ -7,7 +7,7 @@ canvas.height = window.innerHeight;
 
 // Load the map image
 const mapImg = new Image();
-mapImg.src = "TopographicMap.png"; // make sure the filename matches EXACTLY
+mapImg.src = "map.png"; // make sure the filename matches EXACTLY
 
 // Map view state
 let scale = 1;
