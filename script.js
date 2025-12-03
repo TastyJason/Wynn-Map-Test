@@ -7,22 +7,19 @@ canvas.height = window.innerHeight;
 
 // Load the map image
 const mapImg = new Image();
-mapImg.src = "map.png"; // make sure the filename matches EXACTLY
+mapImg.src = "map.png"; // ensure filename matches
 
-// Map view state
+// Map state
 let scale = 1;
-let targetScale = 1;
 let offsetX = 0;
 let offsetY = 0;
 
-// Dragging state
+// Drag state
 let dragging = false;
-let lastX, lastY;
+let lastX = 0;
+let lastY = 0;
 
-// Zoom animation speed
-const zoomSpeed = 0.2;
-
-// Draw the map
+// Draw function
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.save();
@@ -32,26 +29,7 @@ function draw() {
   ctx.restore();
 }
 
-// Animate loop for smooth zoom
-function animate() {
-  // Smoothly interpolate scale
-  const prevScale = scale;
-  scale += (targetScale - scale) * zoomSpeed;
-
-  // Adjust offset smoothly to keep cursor position
-  offsetX += (zoomOffsetX - offsetX) * zoomSpeed;
-  offsetY += (zoomOffsetY - offsetY) * zoomSpeed;
-
-  draw();
-  requestAnimationFrame(animate);
-}
-
-// Variables for smooth offset adjustment
-let zoomOffsetX = 0;
-let zoomOffsetY = 0;
-
-// Start animation
-animate();
+mapImg.onload = draw;
 
 // Dragging
 canvas.addEventListener("mousedown", (e) => {
@@ -66,6 +44,7 @@ canvas.addEventListener("mousemove", (e) => {
   offsetY += e.clientY - lastY;
   lastX = e.clientX;
   lastY = e.clientY;
+  draw();
 });
 
 canvas.addEventListener("mouseup", () => dragging = false);
@@ -81,19 +60,22 @@ canvas.addEventListener("click", (e) => {
 // Zoom toward cursor
 canvas.addEventListener("wheel", (e) => {
   e.preventDefault();
+
   const zoomStrength = 0.1;
   const mouseX = e.clientX;
   const mouseY = e.clientY;
 
-  // Map coordinates under cursor before zoom
-  const xBeforeZoom = (mouseX - offsetX) / scale;
-  const yBeforeZoom = (mouseY - offsetY) / scale;
+  // Get the point on the map under the cursor
+  const mapX = (mouseX - offsetX) / scale;
+  const mapY = (mouseY - offsetY) / scale;
 
-  // Update target scale
-  targetScale += e.deltaY > 0 ? -zoomStrength : zoomStrength;
-  targetScale = Math.min(Math.max(targetScale, 0.1), 10);
+  // Update scale
+  scale *= e.deltaY > 0 ? 1 - zoomStrength : 1 + zoomStrength;
+  scale = Math.min(Math.max(scale, 0.1), 10); // adjust min/max zoom
 
-  // Calculate new offset so cursor point stays fixed
-  zoomOffsetX = mouseX - xBeforeZoom * targetScale;
-  zoomOffsetY = mouseY - yBeforeZoom * targetScale;
+  // Recalculate offset so the point under cursor stays fixed
+  offsetX = mouseX - mapX * scale;
+  offsetY = mouseY - mapY * scale;
+
+  draw();
 });
