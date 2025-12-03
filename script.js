@@ -33,25 +33,13 @@ function draw() {
 
 mapImg.onload = draw;
 
-// Zoom with the mouse wheel toward cursor
+// Zoom with the mouse wheel
 canvas.addEventListener("wheel", (e) => {
-  e.preventDefault(); // prevent page scroll
-
   const zoomStrength = 0.1;
-  const mouseX = e.clientX;
-  const mouseY = e.clientY;
+  const direction = e.deltaY > 0 ? -zoomStrength : zoomStrength;
 
-  // Map coordinates before zoom
-  const xBeforeZoom = (mouseX - offsetX) / scale;
-  const yBeforeZoom = (mouseY - offsetY) / scale;
-
-  // Update scale
-  scale += e.deltaY > 0 ? -zoomStrength : zoomStrength;
-  scale = Math.min(Math.max(scale, 0.3), 4); // keep min/max zoom
-
-  // Adjust offset so the point under the cursor stays fixed
-  offsetX = mouseX - xBeforeZoom * scale;
-  offsetY = mouseY - yBeforeZoom * scale;
+  scale += direction;
+  scale = Math.min(Math.max(scale, 0.3), 4); // limit zoom
 
   draw();
 });
