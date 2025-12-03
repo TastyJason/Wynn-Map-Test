@@ -48,6 +48,25 @@ function clampOffsets() {
 // Draw function
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+//prevent scrolling from locking too early
+  const mapW = mapImg.width * scale;
+  const mapH = mapImg.height * scale;
+
+  if (mapW > canvas.width) {
+    offsetX = Math.min(offsetX, 0);
+    offsetX = Math.max(offsetX, canvas.width - mapW);
+  } else {
+    offsetX = (canvas.width - mapW) / 2; // center when smaller
+  }
+
+  if (mapH > canvas.height) {
+    offsetY = Math.min(offsetY, 0);
+    offsetY = Math.max(offsetY, canvas.height - mapH);
+  } else {
+    offsetY = (canvas.height - mapH) / 2; // center when smaller
+  }
+  
   ctx.save();
   ctx.translate(offsetX, offsetY);
   ctx.scale(scale, scale);
