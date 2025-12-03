@@ -19,21 +19,6 @@ let dragging = false;
 let lastX = 0;
 let lastY = 0;
 
-//clamp
-function clampOffsets() {
-  const maxOffsetX = 0;
-  const maxOffsetY = 0;
-  const minOffsetX = canvas.width - mapImg.width * scale;
-  const minOffsetY = canvas.height - mapImg.height * scale;
-
-  // If map smaller than canvas, center it
-  if (minOffsetX > maxOffsetX) offsetX = (canvas.width - mapImg.width * scale) / 2;
-  else offsetX = Math.min(maxOffsetX, Math.max(minOffsetX, offsetX));
-
-  if (minOffsetY > maxOffsetY) offsetY = (canvas.height - mapImg.height * scale) / 2;
-  else offsetY = Math.min(maxOffsetY, Math.max(minOffsetY, offsetY));
-}
-
 // Draw function
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -91,6 +76,7 @@ canvas.addEventListener("wheel", (e) => {
   // Adjust offset so cursor point stays fixed
   offsetX = mouseX - mapX * scale;
   offsetY = mouseY - mapY * scale;
-
+  
+  clampOffsets(); 
   draw();
 });
