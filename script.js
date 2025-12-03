@@ -19,6 +19,32 @@ let dragging = false;
 let lastX = 0;
 let lastY = 0;
 
+// ------------------------------
+// ADD: clampOffsets() function
+// ------------------------------
+function clampOffsets() {
+  const imgW = mapImg.naturalWidth;
+  const imgH = mapImg.naturalHeight;
+
+  if (!imgW || !imgH) return; // image not loaded yet
+
+  const maxOffsetX = 0;
+  const maxOffsetY = 0;
+  const minOffsetX = canvas.width - imgW * scale;
+  const minOffsetY = canvas.height - imgH * scale;
+
+  // Center if map is smaller than canvas
+  if (minOffsetX > maxOffsetX)
+    offsetX = (canvas.width - imgW * scale) / 2;
+  else
+    offsetX = Math.min(maxOffsetX, Math.max(minOffsetX, offsetX));
+
+  if (minOffsetY > maxOffsetY)
+    offsetY = (canvas.height - imgH * scale) / 2;
+  else
+    offsetY = Math.min(maxOffsetY, Math.max(minOffsetY, offsetY));
+}
+
 // Draw function
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -44,6 +70,8 @@ canvas.addEventListener("mousemove", (e) => {
   offsetY += e.clientY - lastY;
   lastX = e.clientX;
   lastY = e.clientY;
+
+  clampOffsets(); // <-- ADDED
   draw();
 });
 
@@ -61,20 +89,22 @@ canvas.addEventListener("click", (e) => {
 canvas.addEventListener("wheel", (e) => {
   e.preventDefault(); // prevent page scroll
 
-  const zoomStrength = 0.2; // <-- change this number to increase/decrease zoom increment
+  const zoomStrength = 0.2;
   const mouseX = e.clientX;
   const mouseY = e.clientY;
 
-  // Map coordinates under the cursor
+  // Map coords at cursor
   const mapX = (mouseX - offsetX) / scale;
   const mapY = (mouseY - offsetY) / scale;
 
-  // Update scale based on scroll direction
+  // Update scale
   scale *= e.deltaY > 0 ? 1 - zoomStrength : 1 + zoomStrength;
-  scale = Math.min(Math.max(scale, 0.1), 10); // set min/max zoom limits
+  scale = Math.min(Math.max(scale, 0.1), 10);
 
-  // Adjust offset so cursor point stays fixed
+  // Adjust offset so the cursor stays fixed
   offsetX = mouseX - mapX * scale;
   offsetY = mouseY - mapY * scale;
+
+  clampOffsets(); // <-- ADDED
   draw();
 });
