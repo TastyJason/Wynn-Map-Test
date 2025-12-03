@@ -57,23 +57,23 @@ canvas.addEventListener("click", (e) => {
   console.log("Map clicked at:", x, y);
 });
 
-// Zoom toward cursor
+// Zoom toward cursor with adjustable increment
 canvas.addEventListener("wheel", (e) => {
-  e.preventDefault();
+  e.preventDefault(); // prevent page scroll
 
-  const zoomStrength = 0.3;
+  const zoomStrength = 0.2; // <-- change this number to increase/decrease zoom increment
   const mouseX = e.clientX;
   const mouseY = e.clientY;
 
-  // Get the point on the map under the cursor
+  // Map coordinates under the cursor
   const mapX = (mouseX - offsetX) / scale;
   const mapY = (mouseY - offsetY) / scale;
 
-  // Update scale
+  // Update scale based on scroll direction
   scale *= e.deltaY > 0 ? 1 - zoomStrength : 1 + zoomStrength;
-  scale = Math.min(Math.max(scale, 0.1), 10); // adjust min/max zoom
+  scale = Math.min(Math.max(scale, 0.1), 10); // set min/max zoom limits
 
-  // Recalculate offset so the point under cursor stays fixed
+  // Adjust offset so cursor point stays fixed
   offsetX = mouseX - mapX * scale;
   offsetY = mouseY - mapY * scale;
 
