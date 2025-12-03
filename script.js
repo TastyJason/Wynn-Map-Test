@@ -61,7 +61,7 @@ canvas.addEventListener("click", (e) => {
 canvas.addEventListener("wheel", (e) => {
   e.preventDefault();
 
-  const zoomStrength = 0.1;
+  const zoomStrength = 0.3;
   const mouseX = e.clientX;
   const mouseY = e.clientY;
 
