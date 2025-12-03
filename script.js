@@ -39,7 +39,7 @@ canvas.addEventListener("wheel", (e) => {
   const direction = e.deltaY > 0 ? -zoomStrength : zoomStrength;
 
   scale += direction;
-  scale = Math.min(Math.max(scale, 0.3), 4); // limit zoom
+  scale = Math.min(Math.max(scale, 0.1), 10); // limit zoom
 
   draw();
 });
