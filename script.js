@@ -76,7 +76,5 @@ canvas.addEventListener("wheel", (e) => {
   // Adjust offset so cursor point stays fixed
   offsetX = mouseX - mapX * scale;
   offsetY = mouseY - mapY * scale;
-  
-  clampOffsets(); 
   draw();
 });
