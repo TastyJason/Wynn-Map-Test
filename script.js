@@ -7,11 +7,11 @@ canvas.height = window.innerHeight;
 
 // Load the map image
 const mapImg = new Image();
-mapImg.src = "map.png"; // Make sure the filename matches exactly
+mapImg.src = "map.png"; // make sure the filename matches exactly
 
-// Map view state
+// Map state
 let scale = 1;
-let targetScale = 1; // for smooth zoom
+let targetScale = 1;
 let offsetX = 0;
 let offsetY = 0;
 
@@ -22,6 +22,10 @@ let lastX, lastY;
 // Zoom animation speed
 const zoomSpeed = 0.2;
 
+// Store zoom target offset to interpolate
+let zoomOffsetX = 0;
+let zoomOffsetY = 0;
+
 // Draw the map
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -29,16 +33,20 @@ function draw() {
   ctx.save();
   ctx.translate(offsetX, offsetY);
   ctx.scale(scale, scale);
-
   ctx.drawImage(mapImg, 0, 0);
-
   ctx.restore();
 }
 
-// Animate zoom smoothly
+// Animate loop
 function animate() {
   // Smoothly interpolate scale
+  const prevScale = scale;
   scale += (targetScale - scale) * zoomSpeed;
+
+  // Smoothly adjust offset to keep cursor point fixed
+  offsetX += (zoomOffsetX - offsetX) * zoomSpeed;
+  offsetY += (zoomOffsetY - offsetY) * zoomSpeed;
+
   draw();
   requestAnimationFrame(animate);
 }
@@ -65,17 +73,16 @@ canvas.addEventListener("mousemove", (e) => {
 canvas.addEventListener("mouseup", () => dragging = false);
 canvas.addEventListener("mouseleave", () => dragging = false);
 
-// Click to get map coordinates
+// Click coordinates
 canvas.addEventListener("click", (e) => {
   const x = (e.clientX - offsetX) / scale;
   const y = (e.clientY - offsetY) / scale;
-
   console.log("Map clicked at:", x, y);
 });
 
-// Zoom with mouse wheel toward cursor
+// Zoom with wheel toward cursor
 canvas.addEventListener("wheel", (e) => {
-  e.preventDefault(); // prevent page scroll
+  e.preventDefault();
 
   const zoomStrength = 0.1;
   const mouseX = e.clientX;
@@ -87,13 +94,9 @@ canvas.addEventListener("wheel", (e) => {
 
   // Update target scale
   targetScale += e.deltaY > 0 ? -zoomStrength : zoomStrength;
-  targetScale = Math.min(Math.max(targetScale, 0.1), 10); // min/max zoom
+  targetScale = Math.min(Math.max(targetScale, 0.1), 10);
 
-  // Map coordinates after zoom
-  const xAfterZoom = (mouseX - offsetX) / targetScale;
-  const yAfterZoom = (mouseY - offsetY) / targetScale;
-
-  // Adjust offset to keep cursor point fixed
-  offsetX += (xAfterZoom - xBeforeZoom) * targetScale;
-  offsetY += (yAfterZoom - yBeforeZoom) * targetScale;
+  // Calculate new offset to keep cursor fixed
+  zoomOffsetX = mouseX - xBeforeZoom * targetScale;
+  zoomOffsetY = mouseY - yBeforeZoom * targetScale;
 });
