@@ -164,3 +164,5 @@ coordDisplay.style.color = "white";
 coordDisplay.style.borderRadius = "6px";
 coordDisplay.style.pointerEvents = "none";
 coordDisplay.style.zIndex = "9999";
+
+document.body.appendChild(coordDisplay);
