@@ -134,11 +134,20 @@ canvas.addEventListener("wheel", (e) => {
   draw();
 });
 
+canvas.addEventListener("mousemove", (e) => {
+    if (dragging) return;
+
+    const x = ((e.clientX - offsetX) / scale).toFixed(1);
+    const y = ((e.clientY - offsetY) / scale).toFixed(1);
+
+    coordDisplay.textContent = `${x}, ${y}`;
+});
 
 
-// ===================================================================
-// ADD: Floating single-coordinate display (large font)
-// ===================================================================
+// ADD: Floating single-coordinate display 
+
+const coordDisplay = document.createElement("div");
+coordDisplay.id = "coordDisplay";
 
 coordDisplay.style.position = "fixed";
 coordDisplay.style.left = "50%";
