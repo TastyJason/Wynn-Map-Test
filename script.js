@@ -44,16 +44,24 @@ document.body.appendChild(coordDisplay);
 
 // Clamp movement so map cannot scroll away
 function clampOffsets() {
-    const imgW = mapImg.naturalWidth;
-    const imgH = mapImg.naturalHeight;
+    const imgW = mapImg.naturalWidth * scale;
+    const imgH = mapImg.naturalHeight * scale;
 
-    if (!imgW || !imgH) return;
+    // Case 1: MAP WIDTH SMALLER THAN CANVAS → center it
+    if (imgW <= canvas.width) {
+        offsetX = (canvas.width - imgW) / 2;
+    } else {
+        const minOffsetX = canvas.width - imgW;
+        offsetX = Math.min(0, Math.max(minOffsetX, offsetX));
+    }
 
-    const minOffsetX = canvas.width - imgW * scale;
-    const minOffsetY = canvas.height - imgH * scale;
-
-    offsetX = Math.min(0, Math.max(minOffsetX, offsetX));
-    offsetY = Math.min(0, Math.max(minOffsetY, offsetY));
+    // Case 2: MAP HEIGHT SMALLER THAN CANVAS → center it
+    if (imgH <= canvas.height) {
+        offsetY = (canvas.height - imgH) / 2;
+    } else {
+        const minOffsetY = canvas.height - imgH;
+        offsetY = Math.min(0, Math.max(minOffsetY, offsetY));
+    }
 }
 
 
