@@ -132,17 +132,6 @@ canvas.addEventListener("wheel", (e) => {
 
   clampOffsets();
   draw();
-});
-
-canvas.addEventListener("mousemove", (e) => {
-    if (dragging) return;
-
-    const x = ((e.clientX - offsetX) / scale).toFixed(1);
-    const y = ((e.clientY - offsetY) / scale).toFixed(1);
-
-    coordDisplay.textContent = `${x}, ${y}`;
-});
-
 
 // ADD: Floating single-coordinate display 
 
