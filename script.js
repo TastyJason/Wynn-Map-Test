@@ -127,3 +127,101 @@ canvas.addEventListener("wheel", (e) => {
   clampOffsets(); // <-- ADDED
   draw();
 });
+// -----------------------------
+// LIVE COORDINATE DISPLAY (append to end of script.js)
+// -----------------------------
+
+// If your "true" high-res map is 4091x6485 but the displayed image is smaller,
+// set these. If you want to use the image as-is, set REFERENCE_WIDTH = mapImg.naturalWidth etc.
+const REFERENCE_WIDTH = 4091;   // set to your real map width (or set to mapImg.naturalWidth)
+const REFERENCE_HEIGHT = 6485;  // set to your real map height (or set to mapImg.naturalHeight)
+
+// Optional: provide a function to convert original-image pixels -> Wynncraft coords.
+// Replace the body of this function after you have the affine transform (SCALE + OFFSET).
+// For now it returns null (not computed).
+function toWynnCoords(origX, origY) {
+  // EXAMPLE placeholder:
+  // return { X: origX * 1 + 0, Z: origY * 1 + 0 };
+  // Replace with actual mapping once you have scale/offset or affine matrix.
+  return null;
+}
+
+// Create overlay element (no HTML changes required)
+const coordOverlay = document.createElement("div");
+coordOverlay.style.position = "fixed";
+coordOverlay.style.left = "12px";
+coordOverlay.style.bottom = "12px";
+coordOverlay.style.padding = "6px 8px";
+coordOverlay.style.background = "rgba(0,0,0,0.6)";
+coordOverlay.style.color = "#fff";
+coordOverlay.style.fontFamily = "monospace";
+coordOverlay.style.fontSize = "13px";
+coordOverlay.style.borderRadius = "6px";
+coordOverlay.style.pointerEvents = "none"; // don't block mouse
+coordOverlay.style.zIndex = 9999;
+coordOverlay.innerHTML = "x: — y: —";
+document.body.appendChild(coordOverlay);
+
+// Helper: convert displayed image pixel -> reference/original pixel
+function displayedToOriginal(px, py) {
+  // use naturalWidth/naturalHeight when available (actual file dimensions)
+  const srcW = mapImg.naturalWidth || mapImg.width || REFERENCE_WIDTH;
+  const srcH = mapImg.naturalHeight || mapImg.height || REFERENCE_HEIGHT;
+
+  // If your reference is different from the file, scale up to REFERENCE values:
+  const sx = (REFERENCE_WIDTH  && srcW) ? (REFERENCE_WIDTH  / srcW) : 1;
+  const sy = (REFERENCE_HEIGHT && srcH) ? (REFERENCE_HEIGHT / srcH) : 1;
+
+  return {
+    ox: px * sx,
+    oy: py * sy,
+    srcW,
+    srcH,
+    sx, sy
+  };
+}
+
+// Update overlay text
+function updateOverlayText(e) {
+  if (!mapImg || (!mapImg.naturalWidth && !mapImg.width)) return;
+
+  // Displayed image pixel (image-space, independent of zoom/pan)
+  const dispX = (e.clientX - offsetX) / scale;
+  const dispY = (e.clientY - offsetY) / scale;
+
+  // If mouse is outside the image area, show dashes
+  const imgW = (mapImg.naturalWidth || mapImg.width);
+  const imgH = (mapImg.naturalHeight || mapImg.height);
+  const inside = dispX >= 0 && dispY >= 0 && dispX <= imgW && dispY <= imgH;
+
+  const dispXstr = inside ? Math.round(dispX) : "—";
+  const dispYstr = inside ? Math.round(dispY) : "—";
+
+  // Convert to reference/original image pixels (e.g. 4091x6485)
+  const orig = displayedToOriginal(dispX, dispY);
+  const origXstr = (inside && orig.ox!=null) ? Math.round(orig.ox) : "—";
+  const origYstr = (inside && orig.oy!=null) ? Math.round(orig.oy) : "—";
+
+  // Optionally compute Wynncraft coords (if toWynnCoords is implemented)
+  let wynnText = "";
+  const w = toWynnCoords(orig.ox, orig.oy);
+  if (w && typeof w.X !== "undefined") {
+    wynnText = `<br>Wynn X: ${Math.round(w.X)} Z: ${Math.round(w.Z)}`;
+  } else {
+    wynnText = `<br>Wynn: (not configured)`;
+  }
+
+  coordOverlay.innerHTML =
+    `Disp: ${dispXstr}, ${dispYstr}<br>` +
+    `Orig: ${origXstr}, ${origYstr}` +
+    wynnText;
+}
+
+// Show/hide overlay based on pointer
+canvas.addEventListener("mousemove", (e) => {
+  updateOverlayText(e);
+});
+
+canvas.addEventListener("mouseleave", () => {
+  coordOverlay.innerHTML = "x: — y: —";
+});
