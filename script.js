@@ -92,7 +92,7 @@ canvas.addEventListener("mousemove", (e) => {
 
     clampOffsets();
     draw();
-  }
+  });
 
   // UPDATE LIVE COORD DISPLAY
   const mapX = Math.round((e.clientX - offsetX) / scale);
