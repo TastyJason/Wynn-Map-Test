@@ -7,7 +7,7 @@ canvas.height = window.innerHeight;
 
 // Load the map image
 const mapImg = new Image();
-mapImg.src = "map.png"; // ensure filename matches
+mapImg.src = "map.png";
 
 // Map state
 let scale = 1;
@@ -19,21 +19,18 @@ let dragging = false;
 let lastX = 0;
 let lastY = 0;
 
-// ------------------------------
-// ADD: clampOffsets() function
-// ------------------------------
+// Clamp offsets
 function clampOffsets() {
   const imgW = mapImg.naturalWidth;
   const imgH = mapImg.naturalHeight;
 
-  if (!imgW || !imgH) return; // image not loaded yet
+  if (!imgW || !imgH) return;
 
   const maxOffsetX = 0;
   const maxOffsetY = 0;
   const minOffsetX = canvas.width - imgW * scale;
   const minOffsetY = canvas.height - imgH * scale;
 
-  // Center if map is smaller than canvas
   if (minOffsetX > maxOffsetX)
     offsetX = (canvas.width - imgW * scale) / 2;
   else
@@ -45,11 +42,10 @@ function clampOffsets() {
     offsetY = Math.min(maxOffsetY, Math.max(minOffsetY, offsetY));
 }
 
-// Draw function
+// Draw
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Prevent scrolling from locking too early
   const mapW = mapImg.width * scale;
   const mapH = mapImg.height * scale;
 
@@ -57,16 +53,16 @@ function draw() {
     offsetX = Math.min(offsetX, 0);
     offsetX = Math.max(offsetX, canvas.width - mapW);
   } else {
-    offsetX = (canvas.width - mapW) / 2; // center when smaller
+    offsetX = (canvas.width - mapW) / 2;
   }
 
   if (mapH > canvas.height) {
     offsetY = Math.min(offsetY, 0);
     offsetY = Math.max(offsetY, canvas.height - mapH);
   } else {
-    offsetY = (canvas.height - mapH) / 2; // center when smaller
+    offsetY = (canvas.height - mapH) / 2;
   }
-  
+
   ctx.save();
   ctx.translate(offsetX, offsetY);
   ctx.scale(scale, scale);
@@ -87,73 +83,3 @@ canvas.addEventListener("mousemove", (e) => {
   if (dragging) {
     offsetX += e.clientX - lastX;
     offsetY += e.clientY - lastY;
-    lastX = e.clientX;
-    lastY = e.clientY;
-
-    clampOffsets();
-    draw();
-  });
-
-  // UPDATE LIVE COORD DISPLAY
-if (!dragging) {
-    const mapX = Math.round((e.clientX - offsetX) / scale);
-    const mapY = Math.round((e.clientY - offsetY) / scale);
-    coordDisplay.textContent = `${mapX}, ${mapY}`;
-}
-});
-
-canvas.addEventListener("mouseup", () => dragging = false);
-canvas.addEventListener("mouseleave", () => dragging = false);
-
-// Click coordinates
-canvas.addEventListener("click", (e) => {
-  const x = (e.clientX - offsetX) / scale;
-  const y = (e.clientY - offsetY) / scale;
-  console.log("Map clicked at:", x, y);
-});
-
-// Zoom toward cursor with adjustable increment
-canvas.addEventListener("wheel", (e) => {
-  e.preventDefault(); // prevent page scroll
-
-  const zoomStrength = 0.2;
-  const mouseX = e.clientX;
-  const mouseY = e.clientY;
-
-  // Map coords at cursor
-  const mapX = (mouseX - offsetX) / scale;
-  const mapY = (mouseY - offsetY) / scale;
-
-  // Update scale
-  scale *= e.deltaY > 0 ? 1 - zoomStrength : 1 + zoomStrength;
-  scale = Math.min(Math.max(scale, 0.1), 10);
-
-  // Adjust offset so the cursor stays fixed
-  offsetX = mouseX - mapX * scale;
-  offsetY = mouseY - mapY * scale;
-
-  clampOffsets();
-  draw();
-
-// ADD: Floating single-coordinate display 
-
-const coordDisplay = document.createElement("div");
-coordDisplay.id = "coordDisplay";
-
-coordDisplay.style.position = "fixed";
-coordDisplay.style.left = "50%";
-coordDisplay.style.bottom = "20px";
-coordDisplay.style.transform = "translateX(-50%)";
-
-coordDisplay.style.fontSize = "22px";   // smaller
-coordDisplay.style.fontWeight = "bold";
-coordDisplay.style.fontFamily = "monospace";
-
-coordDisplay.style.padding = "4px 10px";
-coordDisplay.style.background = "rgba(0,0,0,0.45)";
-coordDisplay.style.color = "white";
-coordDisplay.style.borderRadius = "6px";
-coordDisplay.style.pointerEvents = "none";
-coordDisplay.style.zIndex = "9999";
-
-document.body.appendChild(coordDisplay);
