@@ -140,18 +140,18 @@ canvas.addEventListener("wheel", (e) => {
 // ADD: Floating single-coordinate display (large font)
 // ===================================================================
 
-const coordDisplay = document.createElement("div");
 coordDisplay.style.position = "fixed";
-coordDisplay.style.top = "15px";
-coordDisplay.style.left = "15px";
-coordDisplay.style.fontSize = "30px";
+coordDisplay.style.left = "50%";
+coordDisplay.style.bottom = "20px";
+coordDisplay.style.transform = "translateX(-50%)";
+
+coordDisplay.style.fontSize = "22px";   // smaller
 coordDisplay.style.fontWeight = "bold";
 coordDisplay.style.fontFamily = "monospace";
-coordDisplay.style.padding = "6px 12px";
+
+coordDisplay.style.padding = "4px 10px";
 coordDisplay.style.background = "rgba(0,0,0,0.45)";
 coordDisplay.style.color = "white";
-coordDisplay.style.borderRadius = "8px";
+coordDisplay.style.borderRadius = "6px";
 coordDisplay.style.pointerEvents = "none";
 coordDisplay.style.zIndex = "9999";
-coordDisplay.textContent = "0, 0";
-document.body.appendChild(coordDisplay);
