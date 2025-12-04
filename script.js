@@ -95,9 +95,11 @@ canvas.addEventListener("mousemove", (e) => {
   });
 
   // UPDATE LIVE COORD DISPLAY
-  const mapX = Math.round((e.clientX - offsetX) / scale);
-  const mapY = Math.round((e.clientY - offsetY) / scale);
-  coordDisplay.textContent = `${mapX}, ${mapY}`;
+if (!dragging) {
+    const mapX = Math.round((e.clientX - offsetX) / scale);
+    const mapY = Math.round((e.clientY - offsetY) / scale);
+    coordDisplay.textContent = `${mapX}, ${mapY}`;
+}
 });
 
 canvas.addEventListener("mouseup", () => dragging = false);
