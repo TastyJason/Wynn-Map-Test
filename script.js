@@ -35,7 +35,7 @@ coordDisplay.style.pointerEvents = "none";
 coordDisplay.style.zIndex = "9999";
 document.body.appendChild(coordDisplay);
 
-// COORDINATE TRANSFORM
+// Coordinate transform
 function mapToGame(mapX, mapY) {
     const gameX = mapX * 0.99926 - 2388.5;
     const gameY = mapY * -1.2 + 171;
@@ -74,7 +74,7 @@ function draw() {
 
 mapImg.onload = draw;
 
-// DRAGGING
+// Dragging
 canvas.addEventListener("mousedown", e => {
     dragging = true;
     lastX = e.clientX;
@@ -91,7 +91,7 @@ canvas.addEventListener("mousemove", e => {
         draw();
     }
 
-    // convert mouse → map pixel
+    // Update live coordinates
     const mapX = (e.clientX - offsetX) / scale;
     const mapY = (e.clientY - offsetY) / scale;
 
@@ -100,21 +100,13 @@ canvas.addEventListener("mousemove", e => {
     coordDisplay.textContent = `X: ${g.x}   Y: ${g.y}`;
 });
 
-    // Live coordinate display
-    const mapX = (e.clientX - offsetX) / scale;
-    const mapY = (e.clientY - offsetY) / scale;
-    const g = mapToGame(mapX, mapY);
-    coordDisplay.textContent = `${g.x}, ${g.y}`;
-});
-
 canvas.addEventListener("mouseup", () => dragging = false);
 canvas.addEventListener("mouseleave", () => dragging = false);
 
-// ZOOM
+// Zoom
 canvas.addEventListener("wheel", e => {
     e.preventDefault();
 
-    const zoomStrength = 0.2;
     const mouseX = e.clientX;
     const mouseY = e.clientY;
 
