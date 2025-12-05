@@ -98,11 +98,15 @@ canvas.addEventListener("mousemove", e => {
     }
 
     // update live coords (no decimals)
-    const mapX = (e.clientX - offsetX) / scale;
-    const mapY = (e.clientY - offsetY) / scale;
-    
-    const g = mapToGame(mapX, mapY);
-    coordDisplay.textContent = `${g.x}, ${g.y}`;
+function mapToGame(mapX, mapY) {
+    const gameX = mapX * 0.30496 - 1340.9;
+    const gameY = mapY * -1.2 + 171;
+    return {
+        x: Math.round(gameX),
+        y: Math.round(gameY)
+    };
+}
+
 
 });
 
