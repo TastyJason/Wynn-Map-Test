@@ -91,6 +91,15 @@ canvas.addEventListener("mousemove", e => {
         draw();
     }
 
+    // convert mouse → map pixel
+    const mapX = (e.clientX - offsetX) / scale;
+    const mapY = (e.clientY - offsetY) / scale;
+
+    const g = mapToGame(mapX, mapY);
+
+    coordDisplay.textContent = `X: ${g.x}   Y: ${g.y}`;
+});
+
     // Live coordinate display
     const mapX = (e.clientX - offsetX) / scale;
     const mapY = (e.clientY - offsetY) / scale;
