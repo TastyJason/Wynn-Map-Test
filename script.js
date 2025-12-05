@@ -37,8 +37,9 @@ document.body.appendChild(coordDisplay);
 
 // COORDINATE TRANSFORM
 function mapToGame(mapX, mapY) {
-    const gameX = mapX * 0.30496 - 1340.9;
+    const gameX = mapX * 0.99926 - 2388.5;
     const gameY = mapY * -1.2 + 171;
+
     return {
         x: Math.round(gameX),
         y: Math.round(gameY)
