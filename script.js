@@ -99,7 +99,7 @@ canvas.addEventListener("mousemove", e => {
 
     // update live coords (no decimals)
     const mapX = Math.round((e.clientX - offsetX) / scale);
-    const mapY = Math.round((e.clientY - offsetY) / scale);
+    const mapY = Math.round((mapImg.naturalHeight - (e.clientY - offsetY) / scale));
     
     coordDisplay.textContent = `${mapX}, ${mapY}`;
 });
