@@ -107,9 +107,6 @@ function mapToGame(mapX, mapY) {
     };
 }
 
-
-});
-
 canvas.addEventListener("mouseup", () => dragging = false);
 canvas.addEventListener("mouseleave", () => dragging = false);
 
