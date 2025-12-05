@@ -98,10 +98,12 @@ canvas.addEventListener("mousemove", e => {
     }
 
     // update live coords (no decimals)
-    const mapX = Math.round((e.clientX - offsetX) / scale);
-    const mapY = Math.round((mapImg.naturalHeight - (e.clientY - offsetY) / scale));
+    const mapX = (e.clientX - offsetX) / scale;
+    const mapY = (e.clientY - offsetY) / scale;
     
-    coordDisplay.textContent = `${mapX}, ${mapY}`;
+    const g = mapToGame(mapX, mapY);
+    coordDisplay.textContent = `${g.x}, ${g.y}`;
+
 });
 
 canvas.addEventListener("mouseup", () => dragging = false);
